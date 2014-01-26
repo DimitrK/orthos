@@ -80,11 +80,11 @@ enyo.kind({
 });
 ```
 
-In the above example, the components inside `orthos.Validatable` control named `Register` can be validated by calling `Register`'s **`validate()`** method. To see wether the validation failed or not, the **`isValid()`** method can be called which will return a boolean value.
+In the above example, the components inside `orthos.Validatable` control named `Register` can be validated by calling `Register`'s `validate()` method. To see wether the validation failed or not, the **`isValid()`** method can be called which will return a boolean value.
 
 In case of validation failure the errors of the `orthos.validatable` can be retrieved in different formats such as:
 
-* **Object** - By accessing the **`errors`** property.
+* **Object** - By accessing the `errors` property.
 ```
 {
     username: [" should be more than 6 characters long."],
@@ -93,7 +93,7 @@ In case of validation failure the errors of the `orthos.validatable` can be retr
     email: [" should be a correctly formatted email address."]
 }```
 
-* **Array** - By calling the **`getErrorsArray()`** method.
+* **Array** - By calling the `getErrorsArray()` method.
 ```
 [
 "Username should be more than 6 characters long.",
@@ -102,7 +102,7 @@ In case of validation failure the errors of the `orthos.validatable` can be retr
 "Email should be a correctly formatted email address."
 ]
 ```
-* **HTML List** - By calling the **`getErrorsHtml()`** method`.
+* **HTML List** - By calling the `getErrorsHtml()` method`.
 ```
 "<ul>
     <li>Username should be more than 6 characters long.</li>
@@ -111,7 +111,7 @@ In case of validation failure the errors of the `orthos.validatable` can be retr
     <li>Email should be a correctly formatted email address.</li>
 </ul>"
 ```
-* **Onyx PopUp** - By calling the **`showErrorsPopup()`** method.
+* **Onyx PopUp** - By calling the `showErrorsPopup()` method.
 
 **Example** *(continue from above example)* **:**
 ```javascript
