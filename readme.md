@@ -1,7 +1,6 @@
-
 ----
-## Orthos Enyo JS
-A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS
+## Orthos Enyo JS 
+A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS ***[(Sample)](http://jsfiddle.net/dimitrk/Zz9MN/1/)***
 
 ***
 
