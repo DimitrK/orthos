@@ -1,6 +1,6 @@
 ----
 ## Orthos for EnyoJS 
-A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS ***[(Sample)](http://jsfiddle.net/dimitrk/Zz9MN/1/)***
+A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS ***[(Sample)](http://jsfiddle.net/dimitrk/Zz9MN/3/)***
 
 ***
 
@@ -61,7 +61,19 @@ Orthos intoduces a new kind to Enyo named `orthos.Validatable`. By including an 
 * **max** - Used for constrain check. Gets a number. Compares if the current ***input length*** is less or equal than the given number.
 * **sameas** - Used for constrain check. Gets a string indicating the component's name of another input field. Compares if the current input value is the same as the input value of the field with the given name
 
-**Example:**
+**Published properties:**
+
+* **withClasses** - *(default: true)* Add classes to inputs or their decorators if any, after validation.
+* **errorClass** - *(default: "validation-error")* The name of the class in case of a failed validation and `withClasses` is set to `true`.
+* **successClass** - *(default: "validation-success")* The name of the class in case of a successful validation and `withClasses` is set to `true`.
+* **live** - *(default: true)* Validates each input when its value changes or an `onchange` event is fired.
+
+**Events:**
+
+* **onLiveError** - Event that fires when `live` is set to true and validation fails. Returns the form and the input control that has been validated.
+* **onLiveSuccess** - Event that fires when `live` is set to true and validation succeeds. Returns the form and the input control that has been validated.
+
+**Simple Example:**
 ```javascript
 enyo.kind({
     name: "Register",
@@ -135,8 +147,6 @@ enyo.kind({
 ***
 
 ### ***Yet to do:***
-* Code cleanup
-* Add custom validation error messages
 * Add tests
 
 ***
