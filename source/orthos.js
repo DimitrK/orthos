@@ -180,8 +180,8 @@
                 runChecker.apply(this, [selectedConstrain, control]);
             }
         }
-        
-        if (this.getInteractiveClasses() === false) {
+
+        if (this.getInteractiveClasses() === true) {
             setElementClasses.call(this, control);
         }
     };
