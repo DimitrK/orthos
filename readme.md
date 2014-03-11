@@ -97,15 +97,18 @@ In the above example, the components inside `orthos.Validatable` control named `
 In case of validation failure the errors of the `orthos.validatable` can be retrieved in different formats such as:
 
 * **Object** - By accessing the `errors` property.
+
 ```
 {
     username: [" should be more than 6 characters long."],
     password: [" should be more than 6 characters long."],
     passwordVerify: [" should be same as password."],
     email: [" should be a correctly formatted email address."]
-}```
+}
+```
 
 * **Array** - By calling the `getErrorsArray()` method.
+
 ```
 [
 "Username should be more than 6 characters long.",
