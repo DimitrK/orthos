@@ -102,7 +102,7 @@
         }
     };
 
-    // For some fucked up reason anyo.dispatcher wont work.
+    // For some fucked up reason enyo.dispatcher wont work.
     addEventListener = function(inNode, inEventType, inHandler) {
         if (inNode.addEventListener) {
             inNode.addEventListener(inEventType, inHandler, false);
@@ -181,7 +181,7 @@
             }
         }
 
-        if (this.getInteractiveClasses() === true) {
+        if (this.getWithClasses() === true) {
             setElementClasses.call(this, control);
         }
     };
@@ -204,12 +204,12 @@
         published: {
             errorClass: "validation-error",
             successClass: "validation-success",
-            interactiveClasses: true,
+            withClasses: true,
             live: true
         },
         events: {
-            onValidationError: "",
-            onValidationSuccess: ""
+            onLiveError: "",
+            onLiveSuccess: ""
         },
         handlers: {
             onchange: "_handleChange"
@@ -312,9 +312,9 @@
                 var control = inEvent.originator;
                 this.validate(control);
                 if( keyHasError.call(this,control.name) ){
-                    this.doValidationError(control);
+                    this.doLiveError(control);
                 } else {
-                    this.doValidationSuccess(control);
+                    this.doLiveSuccess(control);
                 }
             }
         }
