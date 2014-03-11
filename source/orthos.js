@@ -97,7 +97,7 @@
                 this.error = " should be same as " + this.val + ".";
                 var control = findControlByName.call(this.scope, this.val);
                 addEventListener(control.node, "change", this.scope.validate.bind(this.scope, inputEl));
-                return input === control.value;
+                return input === control.getValue();
             }
         }
     };
@@ -180,15 +180,19 @@
                 runChecker.apply(this, [selectedConstrain, control]);
             }
         }
+        
+        if (this.getInteractiveClasses() === false) {
+            setElementClasses.call(this, control);
+        }
     };
 
     validateForm = function (form) {
         // Recursive check in children controls
         enyo.forEach(form.getControls(), function (control) {
             if (!control.hasOwnProperty(validationWord)) {
-                return validateForm.call(this, control);
+                validateForm.call(this, control);
             } else {
-                return validateControl.call(this, control);
+                validateControl.call(this, control);
             }
         }, this);
         formValidated = true;
@@ -301,10 +305,6 @@
                 this.errors = this.errors || {};
                 this.errors[control.name] = [];
                 validateControl.call(this, control);
-            }
-
-            if (this.getInteractiveClasses()) {
-                setElementClasses.call(this, control);
             }
         },
         _handleChange: function(inSender, inEvent) {
