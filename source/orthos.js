@@ -1,7 +1,7 @@
 (function (enyo) {
     var validationWord, formValidated;
     var exceptions, validations, constrains; // Dictionaries
-    var runChecker, setElementClasses, validateForm, findControlByName, validateControl, keyHasError, addEventListener; // Helper functions
+    var runChecker, setElementClasses, shouldValidate, validateForm, findControlByName, validateControl, keyHasError, addEventListener; // Helper functions
 
     formValidated = false;
     validationWord = "is";
@@ -160,6 +160,9 @@
         inputEl.addRemoveClass(this.getSuccessClass(), !errorExists);
     };
 
+    shouldValidate = function(control) {
+        return control.hasOwnProperty(validationWord);
+    };
 
     validateControl = function(control) {
         var prefferedValidations, selectedConstrain;
@@ -189,7 +192,7 @@
     validateForm = function (form) {
         // Recursive check in children controls
         enyo.forEach(form.getControls(), function (control) {
-            if (!control.hasOwnProperty(validationWord)) {
+            if (!shouldValidate(control)) {
                 validateForm.call(this, control);
             } else {
                 validateControl.call(this, control);
@@ -308,8 +311,8 @@
             }
         },
         _handleChange: function(inSender, inEvent) {
-            if( this.getLive() ){
-                var control = inEvent.originator;
+            var control = inEvent.originator;
+            if( this.getLive() && shouldValidate(control) ){
                 this.validate(control);
                 if( keyHasError.call(this,control.name) ){
                     this.doLiveError(control);
