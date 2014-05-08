@@ -55,7 +55,7 @@ Orthos intoduces a new kind to Enyo named `orthos.Validatable`. By including an 
 
 **These properties are:**
 
-* **is** - Used for the basic validation. Gets a string containing one or more comma separated values between `"required", "alphanumeric", "email", "number"`.
+* **is** - Used for the basic validation. Gets a string containing one or more comma separated values between `"required", "alphanumeric", "alphabetical", "email", "number"`.
 * **gt** - Used for constrain check. Gets a number. Compares if the current input value is greater than the given number.
 * **lt** - Used for constrain check. Gets a number. Compares if the current input value is less than the given number.
 * **eq** - Used for constrain check. Gets a number. Compares if the current input value is equals with the given number.
