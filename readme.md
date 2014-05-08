@@ -10,13 +10,14 @@ Orthos is a JavaScript library that provides validations of input fields and is 
 
 The functionalities provided in this library are :
 
-* **Validates for formats:**
+* **Validation formats:**
     * Number
     * Alphanumeric
+    * Alphabetical (letters only a-zA-Z)
     * E-mail
     * Required field
-* **Checks for constrains:**
-    * Minimum
+    * *Possibility to add custom validations*
+* **Checks for constrains    * Minimum
     * Maximum
     * Less than
     * Greater than
@@ -38,7 +39,7 @@ In case you based your project in a different directory structure, include it wh
 
 ```javascript
     // Adding the new dependency
-    enyo.depends(
+    enyo.depends(kr
         "$lib/layout",
         .
         .
@@ -73,7 +74,23 @@ Orthos intoduces a new kind to Enyo named `orthos.Validatable`. By including an 
 * **onLiveError** - Event that fires when `live` is set to true and validation fails. Returns the form and the input control that has been validated.
 * **onLiveSuccess** - Event that fires when `live` is set to true and validation succeeds. Returns the form and the input control that has been validated.
 
+**Custom Validations:**
+You can add your own custom validations before or during the use of Orthos lib. It is done through a static method named `addValidation`. The required arguments are :
+* **`alias`**  The name of the validation.
+* **`validation`**  The validation function or regexp which will be used to validate the input.
+* **`errorMsg`**  The error message which  will appear in case of invalid input to the user.
+* **`override`**  Override existing validation with the same alias.
+
+**Custom Validation Example:**
+```javascript
+// Function as validation argument
+orthos.Validatable.addValidation("gender", function(input){ return input === "male" || input === "female"; }, "should be male or female", false );
+// RegExp as validation argument
+orthos.Validatable.addValidation("small", /^[a-z]+$/g, "should be small letters", false);
+```
+
 **Simple Example:**
+*(With use of custom validations from above)*
 ```javascript
 enyo.kind({
     name: "Register",
@@ -83,6 +100,8 @@ enyo.kind({
         {kind: onyx.Input, name: "password", type:"password", is: "required", min: 6},
         {kind: onyx.Input, name: "passwordVerify", type:"password", is: "required", sameas: "password"},
         {kind: onyx.Input, name: "email", is: "required email"},
+        {kind: onyx.Input, name: "gender", is: "required gender"}, //Custom
+        {kind: onyx.Input, name: "wordsmall", is: "required small"} //Custom
         {kind: onyx.Button, content: "Register", ontap: "register"}
     ],
     .
