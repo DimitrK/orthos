@@ -17,7 +17,8 @@ The functionalities provided in this library are :
     * E-mail
     * Required field
     * *Possibility to add custom validations*
-* **Checks for constrains    * Minimum
+* **Checks for constrains**
+    * Minimum
     * Maximum
     * Less than
     * Greater than
