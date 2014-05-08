@@ -27,25 +27,31 @@
             check: function (input) {
                 return input === +input;
             },
-            error: " should be a number."
+            error: "should be a number."
         },
         alphanumeric: {
             check: function (input) {
                 return (/^\w+$/g).test(input);
             },
-            error: " should consist of letters or numbers."
+            error: "should consist of letters or numbers."
+        },
+        alphabetical: {
+            check: function(input) {
+                return(/^[A-Za-z]+$/g).test(input);
+            },
+            error: "should consist of alphabetical characters only."
         },
         email: {
             check: function (input) {
                 return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i).test(input); //'
             },
-            error: " should be a correctly formatted email address."
+            error: "should be a correctly formatted email address."
         },
         required: {
             check: function (input) {
                 return ( !! input && input !== 0) || input === 0;
             },
-            error: " should not be empty."
+            error: "should not be empty."
         }
     };
     // Constrain check algorithms
@@ -53,7 +59,7 @@
         min: {
             val: undefined,
             check: function (input) {
-                this.error = " should be more than " + this.val + " characters long.";
+                this.error = "should be more than " + this.val + " characters long.";
                 return input.length >= this.val;
             },
             error: ""
@@ -61,7 +67,7 @@
         max: {
             val: undefined,
             check: function (input) {
-                this.error = " should be less than " + this.val + " characters long.";
+                this.error = "should be less than " + this.val + " characters long.";
                 return input.length <= this.val;
             },
             error: ""
@@ -69,7 +75,7 @@
         gt: {
             val: undefined,
             check: function (input) {
-                this.error = "  should be greater than " + this.val + ".";
+                this.error = "should be greater than " + this.val + ".";
                 return input > this.val;
             },
             error: ""
@@ -77,7 +83,7 @@
         lt: {
             val: undefined,
             check: function (input) {
-                this.error = " should be less than " + this.val + ".";
+                this.error = "should be less than " + this.val + ".";
                 return input < this.val;
             },
             error: ""
@@ -85,7 +91,7 @@
         eq: {
             val: undefined,
             check: function (input) {
-                this.error = " should be equal to " + this.val + ".";
+                this.error = "should be equal to " + this.val + ".";
                 return input === this.val;
             },
             error: ""
@@ -94,7 +100,7 @@
             val: undefined,
             scope: {},
             check: function (input, inputEl) {
-                this.error = " should be same as " + this.val + ".";
+                this.error = "should be same as " + this.val + ".";
                 var control = findControlByName.call(this.scope, this.val);
                 addEventListener(control.node, "change", this.scope.validate.bind(this.scope, inputEl));
                 return input === control.getValue();
@@ -219,6 +225,39 @@
         },
         components: [],
         errors: {},
+        statics: {
+            /**
+             * Adds a custom validation method.
+             * @param {String} alias      The alias of the specific validation. e.g. `is:"<alias>"`. 
+             * @param {(Function|String)} validation The validation function or regexp which will be used to validate the input.
+             * @param {String} errorMsg   The error message which  will appear in case of invalid input to the user.
+             * @param {Boolean} override  Override existing validation with the same alias.
+             */
+            addValidation: function(alias, validation, errorMsg, override) {
+                var validateFn;
+                if (validation instanceof RegExp) {
+                    validateFn = function(input) {
+                        return validation.test(input);
+                    };
+                } else if( validation instanceof Function) {
+                    validateFn = validation;
+                } else {
+                    validateFn = function() {
+                        return true;
+                    };
+                    enyo.warn("No validation Function or RegExp passed.");
+                }
+                if (validations && alias && (!validations[alias] || override) ) {
+                    alias = enyo.toLowerCase(alias);
+                    validations[alias] = {
+                        check: validateFn,
+                        error: errorMsg
+                    };
+                } else {
+                    enyo.log("Validation alias already exists.Change alias or set override to true.");
+                }
+            }
+        },
         /**
          * Checks if the validation is passed by looking if there are any errors in the `errors` object
          * @return bool
@@ -259,7 +298,7 @@
             errorsArray = [];
             for (errorKey in this.errors) {
                 if (keyHasError.call(this,errorKey)) {
-                    combinedError = errorKey + this.errors[errorKey][0];
+                    combinedError = errorKey + " " + this.errors[errorKey][0];
                     if (this.errors[errorKey].length > 1) {
                         for (var i = 1; i < this.errors[errorKey].length; i++) {
                             combinedError = combinedError.substring(0, combinedError.length - 1).replace(" and", ",");
