@@ -222,7 +222,8 @@
             onLiveSuccess: ""
         },
         handlers: {
-            onchange: "_handleChange"
+            onchange: "_handleChange",
+            onkeypress: "_handleKeyPress"
         },
         components: [],
         errors: {},
@@ -331,7 +332,8 @@
         _handleChange: function(inSender, inEvent) {
             var control = inEvent.originator;
             var needsValidation = shouldValidate(control);
-            // If form is validated and the control needs validation the mark `formValidated` as `false`
+            enyo.job.stop("keyPressed"); // In case there is any running keypress timeout running.
+            // If form is validated and the control needs validation then mark `formValidated` as `false`
             formValidated = formValidated && !needsValidation;
             if( this.getLive() && needsValidation ){
                 this.validate(control);
@@ -341,6 +343,12 @@
                     this.doLiveSuccess(control);
                 }
             }
+        },
+        _handleKeyPress: function(inSender, inEvent) {
+            var args = arguments;
+            enyo.job("keyPressed", enyo.bind(this, function(){
+                this._handleChange.apply(this, args);
+            }), 1000);
         }
     });
 })(enyo);
