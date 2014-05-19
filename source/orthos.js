@@ -259,24 +259,6 @@
                 }
             }
         },
-        /**
-         * Checks if the validation is passed by looking if there are any errors in the `errors` object
-         * @return bool
-         */
-        create: function () {
-            this.inherited(arguments);
-        },
-        rendered: function () {
-            this.createComponent({
-                name: "errorsPopup",
-                kind: "onyx.Popup",
-                floating: true,
-                centered: true,
-                style: "padding: 10px",
-                allowHtml: true
-            });
-            this.inherited(arguments);
-        },
         isValid: function () {
             var errorKey;
             if (!formValidated) {
@@ -326,16 +308,6 @@
                 errorsHtml += "</li></ul>";
             }
             return errorsHtml;
-        },
-        /**
-         * Shows a pop up formatted with HTML with all the errors of the `errors` object in it
-         * @return void
-         */
-        showErrorsPopup: function () {
-            if (!this.isValid()) {
-                this.$.errorsPopup.setContent(this.getErrorsHtml());
-                this.$.errorsPopup.show();
-            }
         },
         validate: function (control) {
             control = control || this;
