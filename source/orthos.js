@@ -259,18 +259,24 @@
                 }
             }
         },
-        isValid: function () {
+        isValid: function (control) {
+            control = control || this;
             var errorKey;
-            if (!formValidated) {
-                throw new Error("Form not validated");
-            }
-            // Checks if there are any errors in the errors object. If there are, can not be valid.
-            for (errorKey in this.errors) {
-                if (keyHasError.call(this,errorKey)) {
-                    return false;
+            var controlName;
+            if ( control === this ) {
+                !formValidated && this.validate(control);
+                // Checks if there are any errors in the errors object. If there are, can not be valid.
+                for (errorKey in this.errors) {
+                    if (keyHasError.call(this, errorKey)) {
+                        return false;
+                    }
                 }
+                return true;
+            } else {
+                // Checks for any error in the errors object based on the control's name as a key.
+                // If the specific key has no error then the control is valid.
+                return !keyHasError.call(this, control.name);
             }
-            return true;
         },
         /**
          * Returns an array containing all the errors located in the `errors` object.
@@ -324,7 +330,10 @@
         },
         _handleChange: function(inSender, inEvent) {
             var control = inEvent.originator;
-            if( this.getLive() && shouldValidate(control) ){
+            var needsValidation = shouldValidate(control);
+            // If form is validated and the control needs validation the mark `formValidated` as `false`
+            formValidated = formValidated && !needsValidation;
+            if( this.getLive() && needsValidation ){
                 this.validate(control);
                 if( keyHasError.call(this,control.name) ){
                     this.doLiveError(control);
