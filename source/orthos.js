@@ -212,8 +212,8 @@
         name: "orthos.Validatable",
         kind: enyo.Control,
         published: {
-            errorClass: "validation-error",
-            successClass: "validation-success",
+            errorClass: "orthos-validation-error",
+            successClass: "orthos-validation-success",
             withClasses: true,
             live: true
         },
