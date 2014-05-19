@@ -37,7 +37,7 @@
         },
         alphabetical: {
             check: function(input) {
-                return(/^[A-Za-z]+$/g).test(input);
+                return (/^[A-Za-z]+$/g).test(input);
             },
             error: "should consist of alphabetical characters only."
         },
@@ -112,7 +112,7 @@
     addEventListener = function(inNode, inEventType, inHandler) {
         if (inNode.addEventListener) {
             inNode.addEventListener(inEventType, inHandler, false);
-        } 
+        }
         else if (inNode.attachEvent) {
             inNode.attachEvent('on'+inEventType, inHandler);
         } else {
@@ -148,18 +148,19 @@
         }
         return foundControl;
     };
-    
+
     keyHasError = function(key) {
         return this.errors.hasOwnProperty(key) && this.errors[key].length > 0;
     };
 
     setElementClasses = function (inputEl) {
-        var inputName = inputEl.getName(), 
-        errorExists = keyHasError.call(this,inputName), 
-        parent = inputEl.parent;
+        var inputName = inputEl.getName(),
+            errorExists = keyHasError.call(this,inputName),
+            parent = inputEl.parent;
 
-        // If it is in a decorator, the parent class should get the styles.
-        if (parent && (parent.hasClass("enyo-tool-decorator") || parent.hasClass("onyx-input-decorator"))) {
+        // If it is in a decorator or input decorator (enyo or any class containing string `input-decorator`),
+        // the parent class should get the styles.
+        if (parent && (parent.hasClass("enyo-tool-decorator") || ~parent.getClassAttribute().indexOf("input-decorator"))) {
             inputEl = parent;
         }
         inputEl.addRemoveClass(this.getErrorClass(),  errorExists);
@@ -228,7 +229,7 @@
         statics: {
             /**
              * Adds a custom validation method.
-             * @param {String} alias      The alias of the specific validation. e.g. `is:"<alias>"`. 
+             * @param {String} alias      The alias of the specific validation. e.g. `is:"<alias>"`.
              * @param {(Function|String)} validation The validation function or regexp which will be used to validate the input.
              * @param {String} errorMsg   The error message which  will appear in case of invalid input to the user.
              * @param {Boolean} override  Override existing validation with the same alias.
