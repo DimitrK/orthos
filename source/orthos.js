@@ -258,8 +258,6 @@
             onLiveSuccess: ""
         },
         handlers: {
-            attributesChanged: "_handleChange",
-            valueChanged: "_handleChange",
             onchange: "_handleChange",
             onkeypress: "_handleKeyPress"
         },
