@@ -1,9 +1,8 @@
 (function (enyo) {
-    var validationWord, formValidated;
+    var validationWord;
     var exceptions, validations, constrains; // Dictionaries
     var runChecker, setElementClasses, shouldValidate, validateForm, findControlByName, validateControl, keyHasError, addEventListener; // Helper functions
 
-    formValidated = false;
     validationWord = "is";
 
     // Prepublished exceptions
@@ -37,6 +36,8 @@
         },
         alphabetical: {
             check: function(input) {
+                // Exclude booleas as well
+                //return (/(?=^(?!(false|true)).)(?=^[A-Za-z]+$)/g).test(input);
                 return (/^[A-Za-z]+$/g).test(input);
             },
             error: "should consist of alphabetical characters only."
@@ -52,6 +53,12 @@
                 return ( !! input && input !== 0) || input === 0;
             },
             error: "should not be empty."
+        },
+        optional: {
+            check: function() {
+                return true;
+            },
+            error: ""
         }
     };
     // Constrain check algorithms
@@ -102,21 +109,47 @@
             check: function (input, inputEl) {
                 this.error = "should be same as " + this.val + ".";
                 var control = findControlByName.call(this.scope, this.val);
-                addEventListener(control.node, "change", this.scope.validate.bind(this.scope, inputEl));
+                addEventListener(control, "change", this.scope.validate.bind(this.scope, inputEl));
                 return input === control.getValue();
             }
         }
     };
+    
+    getValidationsArray = function(control) {
+        // Change any capital case to lower, remove any spaces at start or end of string and then split it when spaces detected.
+        var validationsString, validationsArray;
+        validationsString  = control[validationWord].toLowerCase().replace(/(^\s+|\s+$)/g,"");
+        if ( validationsString === "" ) {
+            return [];
+        } else {
+            validationsArray = validationsString.split(/\s+/g);
+            return validationsArray;
+        }
+    };
 
     // For some fucked up reason enyo.dispatcher wont work.
-    addEventListener = function(inNode, inEventType, inHandler) {
-        if (inNode.addEventListener) {
-            inNode.addEventListener(inEventType, inHandler, false);
+    addEventListener = function(inControl, inEventType, inHandler) {
+        var node = inControl.node;
+        var destroy = inControl.destroy;
+        if (node.addEventListener) {
+            node.addEventListener(inEventType, inHandler, false);
+            inControl.destroy = function() {
+                node.removeEventListener(inEventType, inHandler);
+                destroy.apply(inControl, arguments);
+            };
         }
         else if (inNode.attachEvent) {
-            inNode.attachEvent('on'+inEventType, inHandler);
+            node.attachEvent('on' + inEventType, inHandler);
+            inControl.destroy = function() {
+                node.detachEvent('on' + inEventType, inHandler);
+                destroy.apply(inControl, arguments);
+            };
         } else {
-            throw exceptions.events;
+            node["on" + inEventType] = inHandler;
+            inControl.destroy = function() {
+                node["on" + inEventType] = undefined;
+                destroy.apply(inControl, arguments);
+            };
         }
     };
 
@@ -173,7 +206,10 @@
 
     validateControl = function(control) {
         var prefferedValidations, selectedConstrain;
-        prefferedValidations = control[validationWord].toLowerCase().split(" ");
+        prefferedValidations = getValidationsArray(control);
+        if ( !~prefferedValidations.indexOf("optional") && !~prefferedValidations.indexOf("required") ) {
+            prefferedValidations.push("required"); // Make by default required if none is passed
+        }
         enyo.forEach(prefferedValidations, function (validationName) {
             if (validations.hasOwnProperty(validationName)) {
                 runChecker.apply(this, [validations[validationName], control]);
@@ -205,7 +241,7 @@
                 validateControl.call(this, control);
             }
         }, this);
-        formValidated = true;
+        form._validated = true;
     };
 
     return enyo.kind({
@@ -222,11 +258,18 @@
             onLiveSuccess: ""
         },
         handlers: {
+            attributesChanged: "_handleChange",
+            valueChanged: "_handleChange",
             onchange: "_handleChange",
             onkeypress: "_handleKeyPress"
         },
         components: [],
         errors: {},
+        _validated: false,
+        create: function() {
+            this.inherited(arguments);
+            this._validated = false;
+        },
         statics: {
             /**
              * Adds a custom validation method.
@@ -260,12 +303,20 @@
                 }
             }
         },
+        /**
+         * Checks if a control is valid by looking up in the errors object. If none 
+         * provided checks for the whole form. If form was never validated before it
+         * will try to validate it before checking
+         * for its validity
+         * @param  {enyo.Instance}  control The control which will be checked
+         * @return {Boolean}         False if is invalid, True if valid
+         */
         isValid: function (control) {
             control = control || this;
             var errorKey;
             var controlName;
             if ( control === this ) {
-                !formValidated && this.validate(control);
+                !this._validated && this.validate(control);
                 // Checks if there are any errors in the errors object. If there are, can not be valid.
                 for (errorKey in this.errors) {
                     if (keyHasError.call(this, errorKey)) {
@@ -281,7 +332,7 @@
         },
         /**
          * Returns an array containing all the errors located in the `errors` object.
-         * @return array The array with the error objects
+         * @return {Array} The array with the error objects
          */
         getErrorsArray: function () {
             var errorKey, errorsArray, combinedError;
@@ -303,7 +354,7 @@
         },
         /**
          * Returns a formated HTML list of the errors that the `errors` object contains.
-         * @return string
+         * @return {String}
          */
         getErrorsHtml: function () {
             var errorsArray, errorsHtml;
@@ -316,6 +367,30 @@
             }
             return errorsHtml;
         },
+        /**
+         * Changes validation methods as stated in `is` property of the control
+         * @param  {enyo.Instance} control   An enyo input control
+         * @param  {String} inValidation  The new validation
+         * @param  {String} outValidation The validation that shall get replaced, if none provided then the new validation will get appended.
+         */
+        changeContorlValidation: function(control, inValidation, outValidation) {
+            var controlValidations = getValidationsArray(control),
+                outIndexInValidations = controlValidations.indexOf(outValidation),
+                inIndexInValidations = controlValidations.indexOf(inValidation);
+            if (enyo.isObject(control) && !!validations[inValidation] && !~inIndexInValidations) {
+                if (~outIndexInValidations) {
+                    controlValidations[outIndexInValidations] = inValidation;
+                } else {
+                    controlValidations.push(inValidation);
+                }
+                control[validationWord] = controlValidations.join(" ");
+                this._validated = false;
+            }
+        },
+        /**
+         * Validates a specific control if proviced. Otherwise all the input controls in the form.
+         * @param  {enyo.Instance} control [description]
+         */
         validate: function (control) {
             control = control || this;
             if ( control === this ) {
@@ -329,12 +404,13 @@
                 validateControl.call(this, control);
             }
         },
+        //* Private methods
         _handleChange: function(inSender, inEvent) {
             var control = inEvent.originator;
             var needsValidation = shouldValidate(control);
-            enyo.job.stop("keyPressed"); // In case there is any running keypress timeout running.
-            // If form is validated and the control needs validation then mark `formValidated` as `false`
-            formValidated = formValidated && !needsValidation;
+            enyo.job.stop("keyPressed"); // In case there is any running keypress timeouts.
+            // If form is validated and the control needs validation then mark `this._validated` as `false`
+            this._validated = this._validated && !needsValidation;
             if( this.getLive() && needsValidation ){
                 this.validate(control);
                 if( keyHasError.call(this,control.name) ){
@@ -348,7 +424,7 @@
             var args = arguments;
             enyo.job("keyPressed", enyo.bind(this, function(){
                 this._handleChange.apply(this, args);
-            }), 1000);
+            }), 1200);
         }
     });
 })(enyo);
