@@ -207,8 +207,11 @@
     validateControl = function(control) {
         var prefferedValidations, selectedConstrain;
         prefferedValidations = getValidationsArray(control);
-        if ( !~prefferedValidations.indexOf("optional") && !~prefferedValidations.indexOf("required") ) {
-            prefferedValidations.push("required"); // Make by default required if none is passed
+        if ( !~prefferedValidations.indexOf("optional") ) {
+            // Make by default required if none is passed
+            if ( !~prefferedValidations.indexOf("required") ) prefferedValidations.push("required");
+        } else {
+            if ( !control.getValue() ) return;
         }
         enyo.forEach(prefferedValidations, function (validationName) {
             if (validations.hasOwnProperty(validationName)) {
