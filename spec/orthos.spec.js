@@ -186,6 +186,32 @@ describe("The orthos.Validatable ", function() {
                 expect($el.hasClass("orthos-validation-success")).toBeFalsy();
                 expect($el.hasClass("orthos-validation-error")).toBeTruthy();
             });
+             it("the class `orthos-validation-error` in an `optional` Input when there is a wrong value but removes the class when element's value changes to empty", function() {
+                var validator = spec.create("optional number", "somedata");
+                var $el = spec.last;
+                validator.validate();
+                expect(validator.isValid()).toBeFalsy();
+                expect($el.hasClass("orthos-validation-success")).toBeFalsy();
+                expect($el.hasClass("orthos-validation-error")).toBeTruthy();
+                $el.setValue("");
+                validator.validate();
+                expect(validator.isValid()).toBeTruthy();
+                expect($el.hasClass("orthos-validation-success")).toBeFalsy();
+                expect($el.hasClass("orthos-validation-error")).toBeFalsy();
+            });
+             it("the class `orthos-validation-success` in an `optional` Input when there is a valid value but removes the class when element's value changes to empty", function() {
+                var validator = spec.create("optional number", 1821);
+                var $el = spec.last;
+                validator.validate();
+                expect(validator.isValid()).toBeTruthy();
+                expect($el.hasClass("orthos-validation-success")).toBeTruthy();
+                expect($el.hasClass("orthos-validation-error")).toBeFalsy();
+                $el.setValue("");
+                validator.validate();
+                expect(validator.isValid()).toBeTruthy();
+                expect($el.hasClass("orthos-validation-success")).toBeFalsy();
+                expect($el.hasClass("orthos-validation-error")).toBeFalsy();
+            });
             it("a custom class `custom-error`, set from `errorClass` published property when element's value is invalid", function() {
                 var validator = spec.create("required", undefined);
                 validator.set("errorClass", "custom-error");

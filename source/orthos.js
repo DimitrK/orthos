@@ -1,7 +1,7 @@
 (function (enyo) {
     var validationWord;
     var exceptions, validations, constrains; // Dictionaries
-    var runChecker, setElementClasses, shouldValidate, validateForm, findControlByName, validateControl, keyHasError, addEventListener; // Helper functions
+    var runChecker, addRmoveValidationClasses, shouldValidate, validateForm, validateControl, findControlByName, keyHasError, addEventListener; // Helper functions
 
     validationWord = "is";
 
@@ -186,9 +186,10 @@
         return this.errors.hasOwnProperty(key) && this.errors[key].length > 0;
     };
 
-    setElementClasses = function (inputEl) {
-        var inputName = inputEl.getName(),
-            errorExists = keyHasError.call(this,inputName),
+    addRmoveValidationClasses = function(inputEl, inTrueToAdd) {
+        inTrueToAdd = !!inTrueToAdd; //Bool force
+        var inputName = inTrueToAdd && inputEl.getName(),
+            errorExists = inTrueToAdd && keyHasError.call(this, inputName),
             parent = inputEl.parent;
 
         // If it is in a decorator or input decorator (enyo or any class containing string `input-decorator`),
@@ -196,8 +197,8 @@
         if (parent && (parent.hasClass("enyo-tool-decorator") || ~parent.getClassAttribute().indexOf("input-decorator"))) {
             inputEl = parent;
         }
-        inputEl.addRemoveClass(this.getErrorClass(),  errorExists);
-        inputEl.addRemoveClass(this.getSuccessClass(), !errorExists);
+        inputEl.addRemoveClass(this.getErrorClass(),  inTrueToAdd && errorExists);
+        inputEl.addRemoveClass(this.getSuccessClass(), inTrueToAdd && !errorExists);
     };
 
     shouldValidate = function(control) {
@@ -211,7 +212,7 @@
             // Make by default required if none is passed
             if ( !~prefferedValidations.indexOf("required") ) prefferedValidations.push("required");
         } else {
-            if ( !control.getValue() ) return;
+            if ( !control.getValue() ) return addRmoveValidationClasses.call(this, control, false);
         }
         enyo.forEach(prefferedValidations, function (validationName) {
             if (validations.hasOwnProperty(validationName)) {
@@ -231,7 +232,7 @@
         }
 
         if (this.getWithClasses() === true) {
-            setElementClasses.call(this, control);
+            addRmoveValidationClasses.call(this, control, true);
         }
     };
 
@@ -385,6 +386,7 @@
                     controlValidations.push(inValidation);
                 }
                 control[validationWord] = controlValidations.join(" ");
+                addRmoveValidationClasses.call(this, control, false);
                 this._validated = false;
             }
         },
