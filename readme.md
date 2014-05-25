@@ -16,6 +16,7 @@ The functionalities provided in this library are :
     * Alphabetical (letters only a-zA-Z)
     * E-mail
     * Required field
+    * Optional field
     * *Possibility to add custom validations*
 * **Checks for constrains**
     * Minimum
@@ -23,19 +24,20 @@ The functionalities provided in this library are :
     * Less than
     * Greater than
     * Equals ( direct value comparisson)
-    * Same as ( value comparisson based on another's field value)
+    * Same as ( value comparisson based on another's field value.)
 * **Presents validation errors as:**
     * Object
     * Array
     * Raw HTML List
-    * Onyx Popup
 
+### **Enyo Veersion Compatibility**
 
+Orthos has been tested with EnyoJS v2.2 - v2.4 and seemed to work properly.
 
 ### **Integrating the library**
 
-If you are using [Enyo Bootplate](https://github.com/enyojs/enyo/wiki/Bootplate), as with any usual Enyo library just copy the `orthos` folder to the project's `lib` directory and update the `package.js` file to point to the `orthos` folder as well.
-In case you based your project in a different directory structure, include it wherever you see appropriate and make sure to update the nearest `package.js` file with the relative location of `orthos` folder.
+If you are using [Enyo Bootplate](https://github.com/enyojs/enyo/wiki/Bootplate), as with any usual Enyo library just download & copy, clone or add as submodule the `orthos` library to the project's `lib` directory and update the `package.js` file to point to the `orthos` folder as well.
+In case you based your project in a different directory structure, include it wherever you see appropriate and make sure to update your `package.js` file with the relative location of `orthos` folder from it.
 
 
 ```javascript
@@ -55,25 +57,67 @@ Orthos intoduces a new kind to Enyo named `orthos.Validatable`. By including an 
 
 **These properties are:**
 
-* **is** - Used for the basic validation. Gets a string containing one or more comma separated values between `"required", "alphanumeric", "alphabetical", "email", "number"`.
+* **is** - Used for the basic validation. Gets a string containing one or more space separated values among `"required", "optional", "alphanumeric", "alphabetical", "email", "number"`. *Note: An input which among other validations contains  as well `optional` will get validated only in case its value is other than empty.*
 * **gt** - Used for constrain check. Gets a number. Compares if the current input value is greater than the given number.
 * **lt** - Used for constrain check. Gets a number. Compares if the current input value is less than the given number.
 * **eq** - Used for constrain check. Gets a number. Compares if the current input value is equals with the given number.
 * **min** - Used for constrain check. Gets a number. Compares if the current ***input length*** is greater or equal than the given number.
 * **max** - Used for constrain check. Gets a number. Compares if the current ***input length*** is less or equal than the given number.
-* **sameas** - Used for constrain check. Gets a string indicating the component's name of another input field. Compares if the current input value is the same as the input value of the field with the given name
+* **sameas** - Used for constrain check. Gets a string indicating the component's name of another input field. Compares if the current input value is the same as the input value of the field with the given Control's name. If a change will occur to the Control which passed as reference, then the present input will be revalidated.
 
 **Published properties:**
 
 * **withClasses** - *(default: true)* Add classes to inputs or their decorators if any, after validation.
 * **errorClass** - *(default: "validation-error")* The name of the class in case of a failed validation and `withClasses` is set to `true`.
 * **successClass** - *(default: "validation-success")* The name of the class in case of a successful validation and `withClasses` is set to `true`.
-* **live** - *(default: true)* Validates each input when its value changes or an `onchange` event is fired.
+* **live** - *(default: true)* Validates each input when an `onchange` or a `keypress` event is fired.
 
 **Events:**
 
-* **onLiveError** - Event that fires when `live` is set to true and validation fails. Returns the form and the input control that has been validated.
-* **onLiveSuccess** - Event that fires when `live` is set to true and validation succeeds. Returns the form and the input control that has been validated.
+* **onLiveError** - Event that fires when `live` is set to true and validation fails. Returns the form and the event of the input which it came from.
+* **onLiveSuccess** - Event that fires when `live` is set to true and validation succeeds. Returns the form and the event of the input which it came from.
+
+**Switching validations**
+You are able to switch the validations of an Input element of the form, or to add new ones by using the method `changeContorlValidation`. This method takes as first argument the control on which one of it validations will get replaced (if there are more than one), second argument the name of the new validation and third argument the name of the validation which is about to get replaced. 
+If the third argument is not set, or non existing validation, the new validation will get appended to the existing ones.
+
+**Switching validations Exanoke:**
+```javascript
+enyo.kind({
+    name: "Register",
+    kind: orthos.Validatable,
+    components: [
+        .
+        .
+        .
+        { components: [
+            { kind: onyx.Checkbox, classes: "enyo-inline", onchange:"togglePostMailMode"},
+            { classes: "enyo-inline", content: "I don't have e-mail address."},
+        ]},
+        {kind: onyx.Input, name: "email", is: "required email", min: 6, placeholder: "E-mail"},
+        {kind: onyx.Input, name: "mail", is: "optional alphanumeric", min: 6, placeholder: "Post mail address", showing: false},
+        .
+        .
+        ],
+        .
+        .
+        togglePostMailMode: function(inSender, inEvent) {
+            var postMailActive = inSender.getChecked();
+            var emailValidation = postMailActive ? "optional" : "required";
+            var postValidation = !postMailActive ? "optional" : "required";
+            
+            this.$.email.parent.setShowing(!postMailActive);
+            this.$.form.changeContorlValidation(this.$.email, emailValidation, postValidation);
+            this.$.mail.parent.setShowing(postMailActive);
+            this.$.form.changeContorlValidation(this.$.mail, postValidation, emailValidation);
+        }
+    ],
+    .
+    .
+
+});
+```
+
 
 **Custom Validations:**
 You can add your own custom validations before or during the use of Orthos lib. It is done through a static method named `addValidation`. The required arguments are :
@@ -87,7 +131,7 @@ You can add your own custom validations before or during the use of Orthos lib. 
 // Function as validation argument
 orthos.Validatable.addValidation("gender", function(input){ return input === "male" || input === "female"; }, "should be male or female", false );
 // RegExp as validation argument
-orthos.Validatable.addValidation("small", /^[a-z]+$/g, "should be small letters", false);
+orthos.Validatable.addValidation("locase", /^[a-z]+$/g, "should be lower case letters", false);
 ```
 
 **Simple Example:**
@@ -102,7 +146,7 @@ enyo.kind({
         {kind: onyx.Input, name: "passwordVerify", type:"password", is: "required", sameas: "password"},
         {kind: onyx.Input, name: "email", is: "required email"},
         {kind: onyx.Input, name: "gender", is: "required gender"}, //Custom
-        {kind: onyx.Input, name: "wordsmall", is: "required small"} //Custom
+        {kind: onyx.Input, name: "words", is: "optional locase"} //Custom
         {kind: onyx.Button, content: "Register", ontap: "register"}
     ],
     .
@@ -112,7 +156,7 @@ enyo.kind({
 });
 ```
 
-In the above example, the components inside `orthos.Validatable` control named `Register` can be validated by calling `Register`'s `validate()` method. To see wether the validation failed or not, the **`isValid()`** method can be called which will return a boolean value.
+In the above example, the components inside `orthos.Validatable` control named `Register` can be validated by calling `Register`'s `isValid()` method. To see wether the validation failed or not, the **`isValid()`** method will return a boolean value. *Note: Wheneve an Input value changes programmaticaly, method `.validate()` should be called for the valiadtion and later `isValid()` will simply return the result.*
 
 In case of validation failure the errors of the `orthos.validatable` can be retrieved in different formats such as:
 
@@ -146,11 +190,14 @@ In case of validation failure the errors of the `orthos.validatable` can be retr
     <li>Email should be a correctly formatted email address.</li>
 </ul>"
 ```
-* **Onyx PopUp** - By calling the `showErrorsPopup()` method.
 
 **Example** *(continue from above example)* **:**
 ```javascript
 enyo.kind({
+    name: ....,
+    kind: ....,
+    onLiveSuccess: "doLiveSuccess",
+    onLiveError: "doLiveError",
     .
     .
     register: function() {
@@ -164,14 +211,25 @@ enyo.kind({
             errorsHtml = this.getErrorsHtml(); // Returns errors in Html format
             this.showErrorsPopup(); // Show Html formatted onyx popup
         }
+    },
+    doLiveSuccess: function(form, inEvent) {
+        var controlSucceed = inEvent.originator;
+        var controlDomNode = inEvent.srcElement;
+        // do what you want on success..
+        console.log(controlSucceed.name + " passed validation ");
+    }
+    doLiveError: function(form, inEvent) {
+        // Same applies here
     }
 });
+
 ```
 ***
 
 ### ***Yet to do:***
-* Add tests
-
+* Add more tests
+* Add localization (error messages)
+* Get camelcased or minus/underscore separated control names and break it into more user friendly text for displaying with errors.
 ***
 If there are any requests, bugs, ideas create an issue or even better a pull request :)
 
