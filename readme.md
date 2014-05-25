@@ -83,6 +83,14 @@ If the third argument is not set, or non existing validation, the new validation
 
 **Switching validations Exanoke:**
 ```javascript
+/** Example Use Case
+*  A scenario where user is asked for email address in some form filling process.
+* In case there is no email address, then a physical post address should be provided 
+* instead. Post mail is the only way to reach that user now, therefor it should be 
+* required while email should be optional since there is none to be provided and the whole
+* form validation will fail if left as required. In the mean time every optional input
+* is hided for cleaner user interface.
+**/
 enyo.kind({
     name: "Register",
     kind: orthos.Validatable,
@@ -95,7 +103,7 @@ enyo.kind({
             { classes: "enyo-inline", content: "I don't have e-mail address."},
         ]},
         {kind: onyx.Input, name: "email", is: "required email", min: 6, placeholder: "E-mail"},
-        {kind: onyx.Input, name: "mail", is: "optional alphanumeric", min: 6, placeholder: "Post mail address", showing: false},
+        {kind: onyx.Input, name: "post", is: "optional alphanumeric", min: 6, placeholder: "Post mail address", showing: false},
         .
         .
         ],
@@ -108,8 +116,8 @@ enyo.kind({
             
             this.$.email.parent.setShowing(!postMailActive);
             this.$.form.changeContorlValidation(this.$.email, emailValidation, postValidation);
-            this.$.mail.parent.setShowing(postMailActive);
-            this.$.form.changeContorlValidation(this.$.mail, postValidation, emailValidation);
+            this.$.post.parent.setShowing(postMailActive);
+            this.$.form.changeContorlValidation(this.$.post, postValidation, emailValidation);
         }
     ],
     .
