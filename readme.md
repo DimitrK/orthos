@@ -238,8 +238,8 @@ enyo.kind({
 * Add more tests
 * Add localization (error messages)
 * Get camelcased or minus/underscore separated control names and break it into more user friendly text for displaying with errors.
-***
-If there are any requests, bugs, ideas create an issue or even better a pull request :)
+
+*** If there are any requests, bugs, ideas create an issue or even better a pull request :)
 
 
 Author: [DimitrK](http://dimitrisk.info)
