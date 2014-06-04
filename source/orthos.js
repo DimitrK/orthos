@@ -1,25 +1,12 @@
+/**
+ * @author DimitrK <https://github.com/DimitrK/>
+ */
 (function (enyo) {
     var validationWord;
     var exceptions, validations, constrains; // Dictionaries
     var runChecker, addRmoveValidationClasses, shouldValidate, validateForm, validateControl, findControlByName, keyHasError, addEventListener; // Helper functions
 
     validationWord = "is";
-
-    // Prepublished exceptions
-    exceptions = {
-        validation: {
-            name: "InvalidValidationOperation",
-            message: "The validation operation could not be found."
-        },
-        constrain: {
-            name: "InvalidConstrainCheck",
-            message: "The constrain check could not be done."
-        },
-        events: {
-            name: "EventsNotSupported",
-            message: "The environment is not supporting known event listening API."
-        }
-    };
     // Validation algorithms
     validations = {
         number: {
@@ -218,7 +205,7 @@
             if (validations.hasOwnProperty(validationName)) {
                 runChecker.apply(this, [validations[validationName], control]);
             } else {
-                throw exceptions.validation;
+                throw "The validation operation could not be found.";
             }
         }, this);
 
@@ -237,8 +224,9 @@
     };
 
     validateForm = function (form) {
+        var formControls = form.getControls();
         // Recursive check in children controls
-        enyo.forEach(form.getControls(), function (control) {
+        enyo.forEach(formControls, function (control) {
             if (!shouldValidate(control)) {
                 validateForm.call(this, control);
             } else {
@@ -249,16 +237,39 @@
     };
 
     return enyo.kind({
+        /**@namespace orthos.Validatable*/
         name: "orthos.Validatable",
         kind: enyo.Control,
         published: {
+            /** 
+             * @memberof orthos.Validatable
+             * @instance
+             * @property {string}  [errorClass=orthos-validation-error] The css class for invalid inputs or their decorators.
+             * */
             errorClass: "orthos-validation-error",
+            /** 
+             * @property {string} [successClass=orthos-validation-success] The css class for valid inputs or their decorators.
+             * @memberof orthos.Validatable
+             * @instance
+             */
             successClass: "orthos-validation-success",
+            /** 
+             * @property {Boolean} [withClasses=true] Apply error/success css classes on inputs or not.
+             * @memberof orthos.Validatable
+             * @instance
+             */
             withClasses: true,
+            /** 
+             * @property {Boolean} [live=true] Validate or not Inputs whenever a `change` or `keypress` event is fired on them.
+             * @memberof orthos.Validatable
+             * @instance
+             */
             live: true
         },
         events: {
+            /**@event orthos.Validatable#onLiveError*/
             onLiveError: "",
+            /**@event orthos.Validatable#onLiveSuccess*/
             onLiveSuccess: ""
         },
         handlers: {
@@ -278,7 +289,7 @@
              * @param {String} alias      The alias of the specific validation. e.g. `is:"<alias>"`.
              * @param {(Function|String)} validation The validation function or regexp which will be used to validate the input.
              * @param {String} errorMsg   The error message which  will appear in case of invalid input to the user.
-             * @param {Boolean} override  Override existing validation with the same alias.
+             * @param {Boolean} [override]  Override existing validation with the same alias.
              */
             addValidation: function(alias, validation, errorMsg, override) {
                 var validateFn;
@@ -306,11 +317,13 @@
             }
         },
         /**
-         * Checks if a control is valid by looking up in the errors object. If none 
-         * provided checks for the whole form. If form was never validated before it
+         * Checks if a control is valid by looking up in the errors object. If form was never validated before it
          * will try to validate it before checking
          * for its validity
-         * @param  {enyo.Instance}  control The control which will be checked
+         * @memberof orthos.Validatable
+         * @instance
+         * @param  {enyo.Instance}  [control] The control which will be checked. If none 
+         * provided checks for the whole form.
          * @return {Boolean}         False if is invalid, True if valid
          */
         isValid: function (control) {
@@ -334,6 +347,8 @@
         },
         /**
          * Returns an array containing all the errors located in the `errors` object.
+         * @memberof orthos.Validatable
+         * @instance
          * @return {Array} The array with the error objects
          */
         getErrorsArray: function () {
@@ -356,6 +371,8 @@
         },
         /**
          * Returns a formated HTML list of the errors that the `errors` object contains.
+         * @memberof orthos.Validatable
+         * @instance
          * @return {String}
          */
         getErrorsHtml: function () {
@@ -371,9 +388,11 @@
         },
         /**
          * Changes validation methods as stated in `is` property of the control
+         * @memberof orthos.Validatable
+         * @instance
          * @param  {enyo.Instance} control   An enyo input control
          * @param  {String} inValidation  The new validation
-         * @param  {String} outValidation The validation that shall get replaced, if none provided then the new validation will get appended.
+         * @param  {String} [outValidation] The validation that shall get replaced, if none provided then the new validation will get appended.
          */
         changeContorlValidation: function(control, inValidation, outValidation) {
             var controlValidations = getValidationsArray(control),
@@ -392,7 +411,9 @@
         },
         /**
          * Validates a specific control if proviced. Otherwise all the input controls in the form.
-         * @param  {enyo.Instance} control [description]
+         * @memberof orthos.Validatable
+         * @instance
+         * @param  {enyo.Instance} [control] The control to validate. If none provided validates the whole form.
          */
         validate: function (control) {
             control = control || this;
@@ -407,7 +428,12 @@
                 validateControl.call(this, control);
             }
         },
-        //* Private methods
+        /**
+         * Handles Input change events and validates the Input source of the event.
+         * @memberof orthos.Validatable 
+         * @instance
+         * @private 
+        */
         _handleChange: function(inSender, inEvent) {
             var control = inEvent.originator;
             var needsValidation = shouldValidate(control);
@@ -423,6 +449,12 @@
                 }
             }
         },
+        /**
+         * Handles `keypress` events. Triggers validation if user 1.2s after last captured event.
+         * @memberof orthos.Validatable
+         * @instance
+         * @private
+         */
         _handleKeyPress: function(inSender, inEvent) {
             var args = arguments;
             enyo.job("keyPressed", enyo.bind(this, function(){
