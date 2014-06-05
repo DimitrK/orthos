@@ -193,6 +193,8 @@
     };
 
     validateControl = function(control) {
+        // In case there is a button or checkbox group control will have getActive method instead.
+        control.getValue = control.getValue || control.getActive;
         var prefferedValidations, selectedConstrain;
         prefferedValidations = getValidationsArray(control);
         if ( !~prefferedValidations.indexOf("optional") ) {
@@ -273,6 +275,7 @@
             onLiveSuccess: ""
         },
         handlers: {
+            onActivate: "_handleActivate", // Enyo group items
             onchange: "_handleChange",
             onkeypress: "_handleKeyPress"
         },
@@ -429,7 +432,7 @@
             }
         },
         /**
-         * Handles Input change events and validates the Input source of the event.
+         * Handles Input `change` events and validates the Input source of the event.
          * @memberof orthos.Validatable 
          * @instance
          * @private 
@@ -460,6 +463,19 @@
             enyo.job("keyPressed", enyo.bind(this, function(){
                 this._handleChange.apply(this, args);
             }), 1200);
+        },
+        /**
+         * Handles `onActivate` events. Passes the group instead of the control that triggered it to `_handleChange`.
+         * @memberof orthos.Validatable
+         * @instance
+         * @private
+         */
+        _handleActivate: function(inSender, inEvent) {
+            var control = inEvent.originator.parent;
+            if ( shouldValidate(control) && inEvent.originator === control.active) {
+                inEvent.originator = inEvent.originator.parent;
+                this._handleChange.apply(this, arguments);
+            }
         }
     });
 })(enyo);

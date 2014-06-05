@@ -443,6 +443,56 @@ describe("An orthos.Validatable ", function() {
                 var form = spec.create("required", null);
                 expect(form.isValid()).toBeFalsy();
             });
+            it("as invalid for checkbox unchechecked", function() {
+                var form = spec.init();
+                form.createComponent({kind:"enyo.Checkbox", is:"required"}, {owner: form});
+                expect(form.isValid()).toBeFalsy();
+            });
+            it("as valid for input checked", function() {
+                var form = spec.init();
+                form.createComponent({kind:"enyo.Checkbox", checked: true, is:"required"}, {owner: form});
+                expect(form.isValid()).toBeTruthy();
+            });
+            it("as invalid for enyo.Group with all elements inactive", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", is: "required", components: [
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
+                expect(form.isValid()).toBeFalsy();
+            });
+            it("as valid for enyo.Group with no validation stated and all elements inactive", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", components: [
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
+                expect(form.isValid()).toBeTruthy();
+            });
+            it("as valid for enyo.Group with one checked element", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", is: "required", components: [
+                    {kind:"enyo.Checkbox", checked: true},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
+                expect(form.isValid()).toBeTruthy();
+            });
+            it("as valid for enyo.Group with no validation stated but one checked element", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", components: [
+                    {kind:"enyo.Checkbox", checked: true},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
+                expect(form.isValid()).toBeTruthy();
+            });
         });
         
         describe("optional", function() {
@@ -470,6 +520,26 @@ describe("An orthos.Validatable ", function() {
             });
             it("as valid for input null", function() {
                 var form = spec.create("optional", null);
+                expect(form.isValid()).toBeTruthy();
+            });
+            it("as valid for enyo.Group with all elements inactive", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", is: "optional", components: [
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
+                expect(form.isValid()).toBeTruthy();
+            });
+            it("as valid for enyo.Group with one checked element", function() {
+                var form = spec.init();
+                form.createComponent({kind: "Group", is: "optional", components: [
+                    {kind:"enyo.Checkbox", checked: true},
+                    {kind:"enyo.Checkbox"},
+                    {kind:"enyo.Checkbox"}
+                ]}, {owner: form});
+                spec.render();
                 expect(form.isValid()).toBeTruthy();
             });
             describe("combined with another validation", function() {
