@@ -8,11 +8,12 @@
   <link rel="stylesheet" type="text/css" href="lib/jasmine-1.3.1/jasmine.css">
   <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine.js"></script>
   <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-html.js"></script>
-
+  <script type="text/javascript" src="lib/jasmine-1.3.1/jasmine-console.js"></script>
+  <script type="text/javascript" src="lib/coverage/blanket.min.js" data-cover-flags="debug"></script>
   <script src="../../../enyo/enyo.js" charset="utf-8"></script>
   <!-- application (debug) -->
-  <script src="../package.js" charset="utf-8"></script>
 
+  <script type="text/javascript" src="../source/orthos.js" data-cover></script>
 
   <!-- include spec files here... -->
   <script type="text/javascript" src="./spec.helper.js"></script>
@@ -22,10 +23,19 @@
     (function() {
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
+      var oldInstrument = blanket.instrument;
+      blanket.instrument = function () {
+          if ( orthos && orthos.Validatable ) {
+              delete orthos.Validatable;
+          }
+          oldInstrument.apply(this, arguments);
+      }
 
       var htmlReporter = new jasmine.HtmlReporter();
+      var consoleReporter = new jasmine.ConsoleReporter();
 
       jasmineEnv.addReporter(htmlReporter);
+      jasmineEnv.addReporter(consoleReporter);
 
       jasmineEnv.specFilter = function(spec) {
         return htmlReporter.specFilter(spec);
@@ -39,7 +49,6 @@
         }
         execJasmine();
       };
-
       function execJasmine() {
         jasmineEnv.execute();
       }

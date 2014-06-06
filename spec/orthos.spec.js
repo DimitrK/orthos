@@ -7,9 +7,8 @@ var enyo = enyo,
 /***
 * Formats the data for the form's validate function.
 */
-
 describe("An orthos.Validatable ", function() {
-    
+
     it("should be a function", function() {
         expect(typeof orthos.Validatable).toEqual("function");
     });
@@ -411,7 +410,7 @@ describe("An orthos.Validatable ", function() {
                 expect(form.isValid()).toBeFalsy();
             });
         });
-        
+
         describe("required", function() {
             it("as valid for any string", function() {
                 var form = spec.create("required", "abc!@ASD234(");
@@ -494,7 +493,7 @@ describe("An orthos.Validatable ", function() {
                 expect(form.isValid()).toBeTruthy();
             });
         });
-        
+
         describe("optional", function() {
             it("as valid for any string", function() {
                 var form = spec.create("optional", "abc!@ASD234(");
@@ -586,7 +585,7 @@ describe("An orthos.Validatable ", function() {
             });
         });
     });
-    
+
     describe("evaluating the constrain of", function() {
 
         describe("min against input length", function() {
@@ -750,7 +749,7 @@ describe("An orthos.Validatable ", function() {
                 expect(form.isValid()).toBeFalsy();
             });
         });
-        
+
         describe("sameas", function() {
             it("as valid while it has the same value with the element it points to by name.", function() {
                 var form = spec.create("required", "nickname");
@@ -798,7 +797,7 @@ describe("An orthos.Validatable ", function() {
                 expect(form.isValid()).toBeFalsy();
             });
             it("as invalid any other Input value", function(){
-                var form = spec.create("hello", "nothello"); 
+                var form = spec.create("hello", "nothello");
                 expect(form.isValid()).toBeFalsy();
             });
             it("as valid an Input with value 'hello'", function(){

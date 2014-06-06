@@ -1,25 +1,117 @@
-/**
- * @author DimitrK <https://github.com/DimitrK/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - source\orthos.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>source\orthos.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">65.87</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">471</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">65.92</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">4.03</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">/**
+ * @author DimitrK &lt;https://github.com/DimitrK/&gt;
  */
 (function (enyo) {
     var validationWord;
     var validations, constrains; // Dictionaries
     var runChecker, addRmoveValidationClasses, shouldValidate, getValidationsArray, validateForm, validateControl, findControlByName, keyHasError, addEventListener; // Helper functions
 
-    validationWord = "is";
+    validationWord = &quot;is&quot;;
     // Validation algorithms
     validations = {
         number: {
             check: function (input) {
                 return input === +input;
             },
-            error: "should be a number."
+            error: &quot;should be a number.&quot;
         },
         alphanumeric: {
             check: function (input) {
                 return (/^\w+$/g).test(input);
             },
-            error: "should consist of letters or numbers."
+            error: &quot;should consist of letters or numbers.&quot;
         },
         alphabetical: {
             check: function(input) {
@@ -27,25 +119,25 @@
                 //return (/(?=^(?!(false|true)).)(?=^[A-Za-z]+$)/g).test(input);
                 return (/^[A-Za-z]+$/g).test(input);
             },
-            error: "should consist of alphabetical characters only."
+            error: &quot;should consist of alphabetical characters only.&quot;
         },
         email: {
             check: function (input) {
-                return (/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i).test(input); //'
+                return (/[a-z0-9!#$%&amp;&#039;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&#039;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i).test(input); //&#039;
             },
-            error: "should be a correctly formatted email address."
+            error: &quot;should be a correctly formatted email address.&quot;
         },
         required: {
             check: function (input) {
-                return ( !! input && input !== 0) || input === 0;
+                return ( !! input &amp;&amp; input !== 0) || input === 0;
             },
-            error: "should not be empty."
+            error: &quot;should not be empty.&quot;
         },
         optional: {
             check: function() {
                 return true;
             },
-            error: ""
+            error: &quot;&quot;
         }
     };
     // Constrain check algorithms
@@ -53,50 +145,50 @@
         min: {
             val: undefined,
             check: function (input) {
-                this.error = "should be more than " + this.val + " characters long.";
-                return input.length >= this.val;
+                this.error = &quot;should be more than &quot; + this.val + &quot; characters long.&quot;;
+                return input.length &gt;= this.val;
             },
-            error: ""
+            error: &quot;&quot;
         },
         max: {
             val: undefined,
             check: function (input) {
-                this.error = "should be less than " + this.val + " characters long.";
-                return input.length <= this.val;
+                this.error = &quot;should be less than &quot; + this.val + &quot; characters long.&quot;;
+                return input.length &lt;= this.val;
             },
-            error: ""
+            error: &quot;&quot;
         },
         gt: {
             val: undefined,
             check: function (input) {
-                this.error = "should be greater than " + this.val + ".";
-                return input > this.val;
+                this.error = &quot;should be greater than &quot; + this.val + &quot;.&quot;;
+                return input &gt; this.val;
             },
-            error: ""
+            error: &quot;&quot;
         },
         lt: {
             val: undefined,
             check: function (input) {
-                this.error = "should be less than " + this.val + ".";
-                return input < this.val;
+                this.error = &quot;should be less than &quot; + this.val + &quot;.&quot;;
+                return input &lt; this.val;
             },
-            error: ""
+            error: &quot;&quot;
         },
         eq: {
             val: undefined,
             check: function (input) {
-                this.error = "should be equal to " + this.val + ".";
+                this.error = &quot;should be equal to &quot; + this.val + &quot;.&quot;;
                 return input === this.val;
             },
-            error: ""
+            error: &quot;&quot;
         },
         sameas: {
             val: undefined,
             scope: {},
             check: function (input, inputEl) {
-                this.error = "should be same as " + this.val + ".";
+                this.error = &quot;should be same as &quot; + this.val + &quot;.&quot;;
                 var control = findControlByName.call(this.scope, this.val);
-                addEventListener(control, "change", this.scope.validate.bind(this.scope, inputEl));
+                addEventListener(control, &quot;change&quot;, this.scope.validate.bind(this.scope, inputEl));
                 return input === control.getValue();
             }
         }
@@ -105,8 +197,8 @@
     getValidationsArray = function(control) {
         // Change any capital case to lower, remove any spaces at start or end of string and then split it when spaces detected.
         var validationsString, validationsArray;
-        validationsString  = control[validationWord].toLowerCase().replace(/(^\s+|\s+$)/g,"");
-        if ( validationsString === "" ) {
+        validationsString  = control[validationWord].toLowerCase().replace(/(^\s+|\s+$)/g,&quot;&quot;);
+        if ( validationsString === &quot;&quot; ) {
             return [];
         } else {
             validationsArray = validationsString.split(/\s+/g);
@@ -126,15 +218,15 @@
             };
         }
         else if (node.attachEvent) {
-            node.attachEvent('on' + inEventType, inHandler);
+            node.attachEvent(&#039;on&#039; + inEventType, inHandler);
             inControl.destroy = function() {
-                node.detachEvent('on' + inEventType, inHandler);
+                node.detachEvent(&#039;on&#039; + inEventType, inHandler);
                 destroy.apply(inControl, arguments);
             };
         } else {
-            node["on" + inEventType] = inHandler;
+            node[&quot;on&quot; + inEventType] = inHandler;
             inControl.destroy = function() {
-                node["on" + inEventType] = undefined;
+                node[&quot;on&quot; + inEventType] = undefined;
                 destroy.apply(inControl, arguments);
             };
         }
@@ -153,7 +245,7 @@
     findControlByName = function(name) {
         var foundControl, controls, control, counter;
         controls = this.getControls();
-        for(counter = 0; counter<controls.length; counter++ ) {
+        for(counter = 0; counter&lt;controls.length; counter++ ) {
             if (foundControl) {
                 return foundControl;
             }
@@ -169,19 +261,19 @@
     };
 
     keyHasError = function(key) {
-        return this.errors.hasOwnProperty(key) && this.errors[key].length > 0;
+        return this.errors.hasOwnProperty(key) &amp;&amp; this.errors[key].length &gt; 0;
     };
 
     addRmoveValidationClasses = function(inputEl, inTrueToAdd) {
         inTrueToAdd = !!inTrueToAdd; //Bool force
-        var inputName = inTrueToAdd && inputEl.getName(),
-            errorExists = inTrueToAdd && keyHasError.call(this, inputName),
+        var inputName = inTrueToAdd &amp;&amp; inputEl.getName(),
+            errorExists = inTrueToAdd &amp;&amp; keyHasError.call(this, inputName),
             parent = inputEl.parent;
-        if (parent && (parent.hasClass("enyo-tool-decorator") || ~parent.getClassAttribute().indexOf("input-decorator"))) {
+        if (parent &amp;&amp; (parent.hasClass(&quot;enyo-tool-decorator&quot;) || ~parent.getClassAttribute().indexOf(&quot;input-decorator&quot;))) {
             inputEl = parent; // If it is in a decorator or input decorator (enyo or any class containing string `input-decorator`),the parent class should get the styles.
         }
-        inputEl.addRemoveClass(this.getErrorClass(),  inTrueToAdd && errorExists);
-        inputEl.addRemoveClass(this.getSuccessClass(), inTrueToAdd && !errorExists);
+        inputEl.addRemoveClass(this.getErrorClass(),  inTrueToAdd &amp;&amp; errorExists);
+        inputEl.addRemoveClass(this.getSuccessClass(), inTrueToAdd &amp;&amp; !errorExists);
     };
 
     shouldValidate = function(control) {
@@ -192,8 +284,8 @@
         control.getValue = control.getValue || control.getActive;  // In case there is a button or checkbox group control will have getActive method instead.
         var prefferedValidations, selectedConstrain;
         prefferedValidations = getValidationsArray(control);
-        if ( !~prefferedValidations.indexOf("optional") ) {
-            if ( !~prefferedValidations.indexOf("required") ) { prefferedValidations.push("required"); } // Make by default required
+        if ( !~prefferedValidations.indexOf(&quot;optional&quot;) ) {
+            if ( !~prefferedValidations.indexOf(&quot;required&quot;) ) { prefferedValidations.push(&quot;required&quot;); } // Make by default required
         } else {
             if ( !control.getValue() ) { return addRmoveValidationClasses.call(this, control, false); }
         }
@@ -201,7 +293,7 @@
             if (validations.hasOwnProperty(validationName)) {
                 runChecker.apply(this, [validations[validationName], control]);
             } else {
-                throw "The validation operation could not be found.";
+                throw &quot;The validation operation could not be found.&quot;;
             }
         }, this);
 
@@ -234,7 +326,7 @@
 
     return enyo.kind({
         /**@namespace orthos.Validatable*/
-        name: "orthos.Validatable",
+        name: &quot;orthos.Validatable&quot;,
         kind: enyo.Control,
         published: {
             /**
@@ -242,13 +334,13 @@
              * @instance
              * @property {string}  [errorClass=orthos-validation-error] The css class for invalid inputs or their decorators.
              * */
-            errorClass: "orthos-validation-error",
+            errorClass: &quot;orthos-validation-error&quot;,
             /**
              * @property {string} [successClass=orthos-validation-success] The css class for valid inputs or their decorators.
              * @memberof orthos.Validatable
              * @instance
              */
-            successClass: "orthos-validation-success",
+            successClass: &quot;orthos-validation-success&quot;,
             /**
              * @property {Boolean} [withClasses=true] Apply error/success css classes on inputs or not.
              * @memberof orthos.Validatable
@@ -264,14 +356,14 @@
         },
         events: {
             /**@event orthos.Validatable#onLiveError*/
-            onLiveError: "",
+            onLiveError: &quot;&quot;,
             /**@event orthos.Validatable#onLiveSuccess*/
-            onLiveSuccess: ""
+            onLiveSuccess: &quot;&quot;
         },
         handlers: {
-            onActivate: "_handleActivate", // Enyo group items
-            onchange: "_handleChange",
-            onkeypress: "_handleKeyPress"
+            onActivate: &quot;_handleActivate&quot;, // Enyo group items
+            onchange: &quot;_handleChange&quot;,
+            onkeypress: &quot;_handleKeyPress&quot;
         },
         components: [],
         errors: {},
@@ -283,7 +375,7 @@
         statics: {
             /**
              * Adds a custom validation method.
-             * @param {String} alias      The alias of the specific validation. e.g. `is:"<alias>"`.
+             * @param {String} alias      The alias of the specific validation. e.g. `is:&quot;&lt;alias&gt;&quot;`.
              * @param {(Function|String)} validation The validation function or regexp which will be used to validate the input.
              * @param {String} errorMsg   The error message which  will appear in case of invalid input to the user.
              * @param {Boolean} [override]  Override existing validation with the same alias.
@@ -300,16 +392,16 @@
                     validateFn = function() {
                         return true;
                     };
-                    enyo.warn("No validation Function or RegExp passed.");
+                    enyo.warn(&quot;No validation Function or RegExp passed.&quot;);
                 }
-                if (validations && alias && (!validations[alias] || override) ) {
+                if (validations &amp;&amp; alias &amp;&amp; (!validations[alias] || override) ) {
                     alias = enyo.toLowerCase(alias);
                     validations[alias] = {
                         check: validateFn,
                         error: errorMsg
                     };
                 } else {
-                    enyo.log("Validation alias already exists.Change alias or set override to true.");
+                    enyo.log(&quot;Validation alias already exists.Change alias or set override to true.&quot;);
                 }
             }
         },
@@ -336,7 +428,7 @@
                 }
                 return true;
             } else {
-                // Checks for any error in the errors object based on the control's name as a key.
+                // Checks for any error in the errors object based on the control&#039;s name as a key.
                 // If the specific key has no error then the control is valid.
                 return !keyHasError.call(this, control.name);
             }
@@ -352,11 +444,11 @@
             errorsArray = [];
             for (errorKey in this.errors) {
                 if (keyHasError.call(this,errorKey)) {
-                    combinedError = errorKey + " " + this.errors[errorKey][0];
-                    if (this.errors[errorKey].length > 1) {
-                        for (var i = 1; i < this.errors[errorKey].length; i++) {
-                            combinedError = combinedError.substring(0, combinedError.length - 1).replace(" and", ",");
-                            combinedError += " and " + this.errors[errorKey][i];
+                    combinedError = errorKey + &quot; &quot; + this.errors[errorKey][0];
+                    if (this.errors[errorKey].length &gt; 1) {
+                        for (var i = 1; i &lt; this.errors[errorKey].length; i++) {
+                            combinedError = combinedError.substring(0, combinedError.length - 1).replace(&quot; and&quot;, &quot;,&quot;);
+                            combinedError += &quot; and &quot; + this.errors[errorKey][i];
                         }
                     }
 
@@ -373,12 +465,12 @@
          */
         getErrorsHtml: function () {
             var errorsArray, errorsHtml;
-            errorsHtml = "";
+            errorsHtml = &quot;&quot;;
             errorsArray = this.getErrorsArray();
             if (errorsArray.length !== 0) {
-                errorsHtml = "<ul><li>";
-                errorsHtml += errorsArray.join("</li><li>");
-                errorsHtml += "</li></ul>";
+                errorsHtml = &quot;&lt;ul&gt;&lt;li&gt;&quot;;
+                errorsHtml += errorsArray.join(&quot;&lt;/li&gt;&lt;li&gt;&quot;);
+                errorsHtml += &quot;&lt;/li&gt;&lt;/ul&gt;&quot;;
             }
             return errorsHtml;
         },
@@ -394,13 +486,13 @@
             var controlValidations = getValidationsArray(control),
                 outIndexInValidations = controlValidations.indexOf(outValidation),
                 inIndexInValidations = controlValidations.indexOf(inValidation);
-            if (enyo.isObject(control) && !!validations[inValidation] && !~inIndexInValidations) {
+            if (enyo.isObject(control) &amp;&amp; !!validations[inValidation] &amp;&amp; !~inIndexInValidations) {
                 if (~outIndexInValidations) {
                     controlValidations[outIndexInValidations] = inValidation;
                 } else {
                     controlValidations.push(inValidation);
                 }
-                control[validationWord] = controlValidations.join(" ");
+                control[validationWord] = controlValidations.join(&quot; &quot;);
                 addRmoveValidationClasses.call(this, control, false);
                 this._validated = false;
             }
@@ -433,10 +525,10 @@
         _handleChange: function(inSender, inEvent) {
             var control = inEvent.originator;
             var needsValidation = shouldValidate(control);
-            enyo.job.stop("keyPressed"); // In case there is any running keypress timeouts.
+            enyo.job.stop(&quot;keyPressed&quot;); // In case there is any running keypress timeouts.
             // If form is validated and the control needs validation then mark `this._validated` as `false`
-            this._validated = this._validated && !needsValidation;
-            if( this.getLive() && needsValidation ){
+            this._validated = this._validated &amp;&amp; !needsValidation;
+            if( this.getLive() &amp;&amp; needsValidation ){
                 this.validate(control);
                 if( keyHasError.call(this,control.name) ){
                     this.doLiveError(inEvent);
@@ -453,7 +545,7 @@
          */
         _handleKeyPress: function(inSender, inEvent) {
             var args = arguments;
-            enyo.job("keyPressed", enyo.bind(this, function(){
+            enyo.job(&quot;keyPressed&quot;, enyo.bind(this, function(){
                 this._handleChange.apply(this, args);
             }), 1200);
         },
@@ -465,10 +557,36 @@
          */
         _handleActivate: function(inSender, inEvent) {
             var control = inEvent.originator.parent;
-            if ( shouldValidate(control) && inEvent.originator === control.active) {
+            if ( shouldValidate(control) &amp;&amp; inEvent.originator === control.active) {
                 inEvent.originator = inEvent.originator.parent;
                 this._handleChange.apply(this, arguments);
             }
         }
     });
-})(enyo);
+})(enyo);</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
