@@ -1,7 +1,8 @@
 ----
-## Orthos for EnyoJS 
+## Orthos for EnyoJS
 A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS ***[(Sample)](http://jsfiddle.net/dimitrk/a5h6P/)***
 
+[![Build Status](https://travis-ci.org/DimitrK/orthos.svg?branch=master)](https://travis-ci.org/DimitrK/orthos)
 ***
 
 ### **Description**
@@ -78,15 +79,15 @@ Orthos intoduces a new kind to Enyo named `orthos.Validatable`. By including an 
 * **onLiveSuccess** - Event that fires when `live` is set to true and validation succeeds. Returns the form and the event of the input which it came from.
 
 **Switching validations**
-You are able to switch the validations of an Input element of the form, or to add new ones by using the method `changeContorlValidation`. This method takes as first argument the control on which one of it validations will get replaced (if there are more than one), second argument the name of the new validation and third argument the name of the validation which is about to get replaced. 
+You are able to switch the validations of an Input element of the form, or to add new ones by using the method `changeContorlValidation`. This method takes as first argument the control on which one of it validations will get replaced (if there are more than one), second argument the name of the new validation and third argument the name of the validation which is about to get replaced.
 If the third argument is not set, or non existing validation, the new validation will get appended to the existing ones.
 
 **Switching validations Exanoke:**
 ```javascript
 /** Example Use Case
 *  A scenario where user is asked for email address in some form filling process.
-* In case there is no email address, then a physical post address should be provided 
-* instead. Post mail is the only way to reach that user now, therefor it should be 
+* In case there is no email address, then a physical post address should be provided
+* instead. Post mail is the only way to reach that user now, therefor it should be
 * required while email should be optional since there is none to be provided and the whole
 * form validation will fail if left as required. In the mean time every optional input
 * is hided for cleaner user interface.
@@ -113,7 +114,7 @@ enyo.kind({
             var postMailActive = inSender.getChecked();
             var emailValidation = postMailActive ? "optional" : "required";
             var postValidation = !postMailActive ? "optional" : "required";
-            
+
             this.$.email.parent.setShowing(!postMailActive);
             this.$.form.changeContorlValidation(this.$.email, emailValidation, postValidation);
             this.$.post.parent.setShowing(postMailActive);
