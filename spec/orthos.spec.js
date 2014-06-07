@@ -3,7 +3,8 @@ var enyo = enyo,
     it = it,
     spyOn = spyOn,
     expect = expect,
-    dillema = dillema;
+    dillema = dillema,
+    spec = spec;
 /***
 * Formats the data for the form's validate function.
 */
@@ -36,14 +37,14 @@ describe("An orthos.Validatable ", function() {
     describe(".isValid()", function() {
         it("should call .validate() if form was never validated.", function() {
             var form = new orthos.Validatable();
-            spyOn(form, 'validate').andCallThrough();
+            spyOn(form, 'validate').and.callThrough();
             form.isValid();
             expect(form.validate).toHaveBeenCalled();
         });
         it("should not call .validate() if form was already validated and no change occured.", function() {
             var form = new orthos.Validatable();
             form.validate();
-            spyOn(form, 'validate').andCallThrough();
+            spyOn(form, 'validate').and.callThrough();
             form.isValid();
             expect(form.validate).not.toHaveBeenCalled();
         });
@@ -62,7 +63,7 @@ describe("An orthos.Validatable ", function() {
         });
         it("should be false when there are errors.", function() {
             var form = new orthos.Validatable();
-            spyOn(form, "validate").andCallFake(function() {
+            spyOn(form, "validate").and.callFake(function() {
                 this.errors = {
                     err1: "There is error1"
                 };
@@ -76,7 +77,7 @@ describe("An orthos.Validatable ", function() {
         it("should return an empty array when there are no errors", function() {
             var errorsArray;
             var form = new orthos.Validatable();
-            spyOn(form, "validate").andCallFake(function() {
+            spyOn(form, "validate").and.callFake(function() {
                 this.errors = {};
             });
             form.validate();
@@ -86,7 +87,7 @@ describe("An orthos.Validatable ", function() {
         });
         it("should return an array with equal number of elements as the existing errors (3)", function() {
             var form = new orthos.Validatable();
-            spyOn(form, "validate").andCallFake(function() {
+            spyOn(form, "validate").and.callFake(function() {
                 this.errors = {
                     err1: "There is error1",
                     err2: "There is error1",
@@ -101,7 +102,7 @@ describe("An orthos.Validatable ", function() {
     describe(".getErrorsHtml()", function() {
         it("should return an empty string when there are no errors", function() {
             var form = new orthos.Validatable();
-            spyOn(form, "validate").andCallFake(function() {
+            spyOn(form, "validate").and.callFake(function() {
                 this.errors = {};
             });
             form.validate();
@@ -109,7 +110,7 @@ describe("An orthos.Validatable ", function() {
         });
         it("should return a HTML list of elements (3)", function() {
             var form = new orthos.Validatable();
-            spyOn(form, "validate").andCallFake(function() {
+            spyOn(form, "validate").and.callFake(function() {
                 this.errors = {
                     err1: ["There is error1"],
                     err2: ["There is error2"],
@@ -142,34 +143,37 @@ describe("An orthos.Validatable ", function() {
     describe("upon user keypress - entering a string, it ", function() {
         var form, USERINPUT;
         USERINPUT = "hey";
-        beforeEach(function() {
-            form = spec.create("required", "");
-            spyOn(form, 'validate').andCallThrough();
-            spyOn(form, '_handleKeyPress').andCallThrough();
+        it("should call .validate once when he finished typing.",  function(done) {
+            var form = spec.create("required", "");
+            spyOn(form, 'validate').and.callThrough();
             spec.render();
-        });
-        it("should call .validate once when he finished typing.",  function() {
             spec.keyPress(USERINPUT);
-            waits(2500);
-            runs(function() {
-                expect(form.validate.callCount).toEqual(1);
+            setTimeout(function(){
+                expect(form.validate.calls.count()).toEqual(1);
                 expect(form.validate).toHaveBeenCalled();
-            });
+                done();
+            }, 2000);
         });
-        it("should call ._handleKeyPress as many times as the chars entered by user.",  function() {
+        it("should call ._handleKeyPress as many times as the chars entered by user.",  function(done) {
+            var form = spec.create("required", "");
+            spyOn(form, '_handleKeyPress').and.callThrough();
+            spec.render();
             spec.keyPress(USERINPUT);
-            waits(1650);
-            runs(function() {
-                expect(form._handleKeyPress.callCount).toEqual(USERINPUT.length);
-            });
+            setTimeout(function(){
+                expect(form._handleKeyPress.calls.count()).toEqual(USERINPUT.length);
+                done();
+            }, 2000);
         });
-        it("should not call .validate at all after user finished typing when `live` published property set to false (default:true).",  function() {
+        it("should not call .validate at all after user finished typing when `live` published property set to false (default:true).",  function(done) {
+            var form = spec.create("required", "");
             form.set("live", false);
+            spyOn(form, 'validate').and.callThrough();
+            spec.render();
             spec.keyPress(USERINPUT);
-            waits(1650);
-            runs(function() {
-                expect(form.validate).not.toHaveBeenCalled();
-            });
+            setTimeout(function(){
+                expect(form.validate.calls.any()).toEqual(false);
+                done();
+            }, 2000);
         });
     });
 

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Jasmine Spec Runner v2.0.0</title>
+
+  <link rel="shortcut icon" type="image/png" href="lib/jasmine-2.0.0/jasmine_favicon.png">
+  <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.0/jasmine.css">
+
+  <script type="text/javascript" src="lib/jasmine-2.0.0/jasmine.js"></script>
+  <script type="text/javascript" src="lib/jasmine-2.0.0/jasmine-html.js"></script>
+  <script type="text/javascript" src="lib/jasmine-2.0.0/jasmine-console.js"></script>
+  <script type="text/javascript" src="lib/jasmine-2.0.0/boot.js"></script>
+  <!--script type="text/javascript" src="lib/coverage/blanket.min.js" data-cover-flags="debug"></script-->
+  <script src="../../../enyo/enyo.js" charset="utf-8"></script>
+  <!-- application (debug) -->
+
+  <script type="text/javascript" src="../source/orthos.js" data-cover></script>
+
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="./spec.helper.js"></script>
+  <script type="text/javascript" src="./orthos.spec.js"></script>
+  <script type="text/javascript">
+    blanket = window.blanket || {};
+    blanket.instrument = blanket.instrument || function(){};
+    var oldInstrument =  blanket.instrument;
+    blanket.instrument = function () {
+        if ( orthos && orthos.Validatable ) {
+            delete orthos.Validatable;
+        }
+        oldInstrument.apply(this, arguments);
+    }
+    var consoleReporter = new jasmineRequire.ConsoleReporter()({
+      showColors: true,
+      timer: new jasmine.Timer,
+      print: function() {
+        console.log.apply(console, arguments)
+      }
+    });
+
+    jasmine.getEnv().addReporter(consoleReporter);
+  </script>
+  <style type="text/css">
+  .orthos-spec {
+    position: absolute;
+    left: -999px;!important
+  }
+  </style>
+</head>
+
+<body>
+  <div class="orthos-spec"> </div>
+</body>
+</html>
