@@ -13,17 +13,21 @@ module.exports = function(grunt) {
         },
         jasmine: {
             all: {
-                src: 'source/orthos.js',
+                src: '<%= jshint.all %>',
                 options: {
                     template: require('grunt-template-jasmine-istanbul'),
                     //template: 'spec/lib/custom.tmpl',
                     templateOptions: {
                         coverage: 'report/istanbul/coverage.json',
                         template: 'spec/lib/custom.tmpl',
-                        report: [
-                            {type: 'html', options: {dir: 'report/istanbul'}},
-                            {type: 'text-summary'}
-                        ],
+                        report: [{
+                            type: 'html',
+                            options: {
+                                dir: 'report/istanbul'
+                            }
+                        }, {
+                            type: 'text-summary'
+                        }],
                         thresholds: {
                             lines: 80,
                             statements: 80,
@@ -38,12 +42,17 @@ module.exports = function(grunt) {
                     styles: 'http://enyojs.com/enyo-2.4.0/enyo.css'
                 }
             }
+        },
+        githooks: {
+            all: {
+                'pre-commit': 'travis'
+            }
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-githooks');
 
     grunt.registerTask('travis', [
         'jshint', 'jasmine'
