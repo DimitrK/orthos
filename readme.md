@@ -1,5 +1,7 @@
 ----
 ## Orthos for EnyoJS
+
+[![Join the chat at https://gitter.im/DimitrK/orthos](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/DimitrK/orthos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 A input validation JavaScript library for [Enyo](https://github.com/enyojs/enyo) JS ***[(Sample)](http://jsfiddle.net/dimitrk/a5h6P/)*** ***[(Source Coverage/Analysis)](http://dimitrk.github.io/enyo/orthos/index.html)***
 
 [![Build Status](https://travis-ci.org/DimitrK/orthos.svg?branch=master)](https://travis-ci.org/DimitrK/orthos)
